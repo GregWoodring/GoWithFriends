@@ -19,14 +19,10 @@ io.use(sharedsession(session, {
     autoSave: true
 }))
 
-let rooms = {};
-let users = {};
+let lobbyData = require('./controllers/lobbyController');
 
 app.use(sharedsession(session));
 
-app.get('/lobby', (req, res) => {
-    res.send(rooms);
-})
 
 //should move this later to a new 
 //module, got it from: https://stackoverflow.com/questions/6563885/socket-io-how-do-i-get-a-list-of-connected-sockets-clients
@@ -48,33 +44,50 @@ lobby.on('connection', function (socket) {
     socket.emit('connectedToLobby');
     //Create a new users, since session isn't working well I will
     //store this in memory and will have to handle clean-up manually
-    let {cookie} = socket.handshake.headers;
+    
     //I'm using a hash to help with efficiency
-    if(!users[cookie]){
-        users[cookie] = {
-            cookie,
-            //will later add functionality for people to add temp
-            //names, may create a random name generator as well
-            userName: 'anon',
-            location: 'lobby'
-        }
-    }
+
+    socket.on('getUpdates', () => {
+        socket.emit('updateLobbyData', lobbyData.Data)
+    });
     //This event tells us that lobby events have been initialized
     //and it's safe to send the client information
     socket.on('initiializedLobbyEvents', () => {
-        socket.emit('updateGames', rooms);
-        lobby.emit('updateUsers', users);
+        socket.emit('updateLobbyData', lobbyData.Data)
+    });
+
+    socket.on('updateUser', data => {
+        let {cookie} = socket.handshake.headers;
+        lobbyData.updateUsers(cookie, data);
+    })
+
+    socket.on('updateMessages', data => {
+        let {messageId} = data;
+        lobbyData.updateMessages(messageId, data) 
+    })
+
+    socket.on('createGame', data => {
+        let {cookie} = socket.handshake.headers
+        lobbyData.createRoom(gameNsp, data.roomId, data.gameName, data.gameTime, data.role, cookie);
+        console.log(lobbyData.rooms);
     })
 
     //On disconnect remove the user from the users hash and update 
     //users on connected client
     socket.on('disconnect', () => {
         let {cookie} = socket.handshake.headers
-        delete users[cookie];
-        lobby.emit('updateUsers', users);
+        lobbyData.updateUsers(cookie, {}, true)
     })
     
 });
+
+//Check for updates on interval, send timestamp
+//client will check it's timestamp in state, if timestamp
+//is different emit update event and send lobby state
+setInterval(() => lobby.emit('checkChanges', lobbyData.timestamp), 1000);
+
+
+
 
 
 
@@ -83,27 +96,27 @@ gameNsp.use(sharedsession(session))
 gameNsp.on('connection', socket => {
     socket.emit('connectedToGame');
     socket.on('joinRoom', function (data) {
-        socket.join(data.room);
+        // socket.join(data.room);
 
-        let {cookie} = socket.handshake.headers;
+        // let {cookie} = socket.handshake.headers;
 
-        socket.handshake.session.roomId = data.room;
-        let user = users[cookie]
-        if(rooms[data.room]){
-            console.log(data, 'Game Does Exists')
-            rooms[data.room].users.push(user);
-        } else {
-            console.log(data, 'Game Does not Exists')
+        // socket.handshake.session.roomId = data.room;
+        // let user = users[cookie]
+        // if(rooms[data.room]){
+        //     console.log(data, 'Game Does Exists')
+        //     rooms[data.room].users.push(user);
+        // } else {
+        //     console.log(data, 'Game Does not Exists')
             
-            rooms[data.room] = {
-                roomId: data.room,
-                gameName: data.gameName,
-                gameTime: data.gameTime,
-                users: [user]
-            }
-        }
-        lobby.emit('updateGames', rooms)
-        console.log(rooms)
+        //     rooms[data.room] = {
+        //         roomId: data.room,
+        //         gameName: data.gameName,
+        //         gameTime: data.gameTime,
+        //         users: [user]
+        //     }
+        // }
+        // lobby.emit('updateGames', rooms)
+        // console.log(rooms)
         
 
         
@@ -116,33 +129,32 @@ gameNsp.on('connection', socket => {
         // socket.emit('maintainState', data.state)
     });
     socket.on('play', function(data) {
-        socket.handshake.session.state = data;
-        socket.to('testRoom').emit('maintainState', data)
+        // socket.handshake.session.state = data;
+        // socket.to('testRoom').emit('maintainState', data)
     })
     socket.on('disconnect', () => {
-        let {cookie} = socket.handshake.headers;
+        // let {cookie} = socket.handshake.headers;
 
-        if(rooms[socket.handshake.session.roomId] && rooms[socket.handshake.session.roomId].users.length > 0){
-            delete rooms[socket.handshake.session.roomId];
-        } else if(rooms[socket.handshake.session.roomId]){
-            console.log('before', rooms);
-            let index = rooms[socket.handshake.session.roomId].users.findIndex(item => {
-                item.cookie === cookie
-            })
-            rooms[socket.handshake.session.roomId].users.splice(index, 1);
-            console.log('after', rooms);
-        } else{
-            console.log('this happened')
-        }
-        console.log(rooms)
-        lobby.emit('updateGames', rooms);
+        // if(rooms[socket.handshake.session.roomId] && rooms[socket.handshake.session.roomId].users.length > 0){
+        //     delete rooms[socket.handshake.session.roomId];
+        // } else if(rooms[socket.handshake.session.roomId]){
+        //     console.log('before', rooms);
+        //     let index = rooms[socket.handshake.session.roomId].users.findIndex(item => {
+        //         item.cookie === cookie
+        //     })
+        //     rooms[socket.handshake.session.roomId].users.splice(index, 1);
+        //     console.log('after', rooms);
+        // } else{
+        //     console.log('this happened')
+        // }
+        // console.log(rooms)
+        // lobby.emit('updateGames', rooms);
     })
 
     socket.emit('recievedGameConnection', { hello: 'world' });
     
 });
 
-setInterval(() => lobby.emit('updateGames', rooms), 1000);
 
 server.listen(3001, () => {
     console.log('You got this!')
