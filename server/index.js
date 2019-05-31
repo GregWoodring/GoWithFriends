@@ -52,7 +52,7 @@ lobby.on('connection', function (socket) {
     console.log("lobbyData", lobbyData);
     console.log("users", lobbyData.users);
     console.log("data sent", lobbyData.Data);
-    console.log("cookie of connected user:", socket.handshake.headers.cookie);
+    console.log("cookie of connected user:", socket.handshake.headers);
     //First we emit back to the client to tell it that we recieved it's
     //connection, this allows it to initialize it's events
     socket.emit('connectedToLobby');
