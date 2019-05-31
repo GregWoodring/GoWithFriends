@@ -1,0 +1,624 @@
+*{
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  font-family: Arial, Helvetica, sans-serif
+}
+/*------------- Start App -----------------*/
+.App{
+  display: flex;
+  
+}
+
+/*------------- End App -----------------*/
+/*----------Start SideBar --------------*/
+.sideBar{
+  display: flex;
+  flex-direction: column;
+  background-color: rgb(11, 11, 12);
+  height: 91vh;
+  width: 15vw;
+}
+.links{
+  background-color: rgb(11, 11, 12);
+  color: white;
+  border: none;
+  padding: 1em;
+  font-size: 1.5em;
+  text-decoration: none;
+  text-align: center;
+}
+.links:hover{
+  background-color: rgb(37, 37, 37)
+}
+/*---------- End SideBar --------------*/
+/*---------- Start Header --------------*/
+.header{
+  height: 9vh;
+  /* background-color: rgb(72, 73, 75); */
+  width: 100vw;
+  border-bottom: rgb(11, 11, 12) solid 2px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: .5em;
+  color: rgb(11, 11, 12);
+  font-family: 'Mrs Sheppards', cursive;
+  font-size: 2.5em;
+  letter-spacing: .15em;
+}
+
+.header > h1{
+  width: 100vw;
+  text-align: center;
+  font-family: 'Mrs Sheppards', cursive;
+}
+
+
+/*---------- End Header --------------*/
+/*---------- Start Game Body --------------*/
+
+.gameBody{
+  display: flex;
+  justify-content: space-around;
+}
+
+.boardContainer{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+}
+
+/*---------- End Game Body --------------*/
+/*---------- Start Game Board --------------*/
+.SquareContainer{
+  background-color: tan;
+  height: 1.5em;
+  width: 1.5em;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.SquareContainer > div{
+  /* border: 1px solid black; */
+  height: .75em;
+  width: .75em;
+}
+
+.board{
+  border: groove tan 10px;
+  width: fit-content;
+  height: fit-content;
+  
+}
+
+.boardRow{
+  display: flex;
+  width: fit-content;
+}
+
+.tlSquare{
+  border-right: 1px solid black;
+  border-bottom: 1px solid black;
+}
+
+.trSquare{
+  
+  border-bottom: 1px solid black;
+}
+
+.blSquare{
+  border-right: 1px solid black;
+}
+
+.starPoint{
+  border-radius: 50%;
+  background-color: black;
+  height: .5em;
+  width: .5em;
+  position: absolute;
+  top: .5em;
+  left: .5em;
+}
+
+.parentContainer{
+  position: relative;
+}
+
+.blackPiece{
+  height: 1em;
+  width: 1em;
+  background-color: black;
+  border-radius: 50%;
+  position: absolute;
+  top: .25em;
+  left: .25em;
+  z-index: 100;
+  box-shadow: 0 0 5px grey;
+}
+
+.whitePiece{
+  height: 1em;
+  width: 1em;
+  background-color: #fff;
+  border-radius: 50%;
+  position: absolute;
+  top: .25em;
+  left: .25em;
+  z-index: 100;
+  box-shadow: 0 0 5px grey;
+}
+
+/*----------End Game Board --------------*/
+/*----------Start Chat --------------*/
+.chatWrapper{
+  display:flex;
+  width: 20vw;
+  /* max-width: 20em;
+  min-width: 15em; */
+  height: 100%;
+  /* margin: 2em 2em 2em 0; */
+  /* box-shadow: 0 5px 10px black;   */
+  /* border-radius: 0 10px 10px 0; */
+  /* border: 1px solid black; */
+}
+
+.chatContainer{
+  /* border: 1px solid black; */
+  width: 20em;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: rgba(20, 25, 255, .1);
+
+}
+
+.chatFooter{
+  height: 5vh;
+  width: 100%;
+  /* background-color: red; */
+}
+
+.messages{
+  overflow: auto;
+  height: 75vh;
+  width: 100%;
+  background-color: rgba(20, 25, 255, .1);
+  padding-top: .5em;
+}
+
+.chatIcon{
+  width: 4em;
+  height: 4em;
+  background-color: black;
+  margin-right: .5em;
+}
+
+.messageWrapper{
+  display: flex;
+  margin: .25em;
+  border-radius: 10px 10px 10px 0;
+  box-shadow: 0 0 5px black;
+  background-color: #fff;
+  font-size: .75em;
+}
+
+.messageBody{
+  width: calc(100% - 4em);
+  padding: .25em;
+}
+
+.myMessage{
+  background-color: rgb(12, 231, 12);
+  justify-content: flex-end;
+  border-radius: 10px 10px 0 10px;
+
+}
+
+.messageHeader{
+  display: flex;
+  justify-content: space-between;
+  margin: .5em 0;
+}
+
+.composeWrapper{
+  height: 10vh;
+  width: 90%;
+  /* border-top: 1px solid black; */
+  display: flex;
+  box-shadow: 0 0 10px black;
+  margin: 0 .5em;
+  /* border-radius: 10px; */
+}
+
+.composeMessageArea{
+  resize: none;
+  height:100%;
+  width: 75%;
+  border: none;
+  background-color: white;
+  font-size: 1em;
+  padding: .5em;
+}
+
+.composeMessageArea:focus{
+  outline: none;
+}
+
+.sendButton{
+  height: 100%;
+  width: 26%;
+  /* border-top: 1px solid black;
+  border-bottom: 1px solid black;
+  border-left: 1px solid black;
+  border-right: 1px solid rgb(19, 24, 255); */
+  font-size: 1.5em;
+  color: white;
+  font-weight: bold;
+  font-family: sans-serif;
+  /* border-radius: 7px; */
+  background-color: rgb(19, 24, 255);
+  box-shadow: lightblue
+}
+
+.sendButton > i{
+  transform: rotate(20deg);
+}
+
+.sendButton:hover{
+  box-shadow: 0 0 20px rgb(19, 24, 255);
+  background-color: #a4fff3;
+  color: rgb(19, 24, 255);
+}
+/*Connection Status*/
+.connectionStatusBar{
+  height: 100%;
+  width: 5vw;
+  /* border-radius: 0 10px 10px 0; */
+  /* border: 1px solid black; */
+  display: flex;
+  flex-direction: column;
+  justify-content: fl;
+}
+.userStatus{
+  background-color: #fff;
+  /* z-index: ; */
+  display: flex;
+  /* align-items: center; */
+  height: 4em;
+  font-size: .75em;
+  flex-direction: column;
+  padding: .25em;
+}
+.connectionUserStatus{
+  display: flex;
+  font-size: .75em;
+  
+}
+.connectionStatusLight{
+  height: 1em;
+  width: 1em;
+  border-radius: 50%;
+  background-color: green;
+  box-shadow: 0 0 10px lightgreen;
+  margin: .25em;
+}
+.connectionStatusHeader{
+  height: 10vh;
+  /* margin-top: .25em; */
+  /* border-top: 1px solid black; */
+  width: 100%;
+  padding: .05em;
+  display: flex;
+  justify-content: flex-end;
+  background-color: rgb(19, 24, 255);
+  /* z-index: 150; */
+  /* border-right: 1px solid black;
+  border-bottom: 1px solid black; */
+  box-shadow: -10 0 10px #27ffe3;
+  /* border-radius: 0 10px 0 0; */
+}
+
+/*----------End Chat --------------*/
+
+/*----------Start Lobby -----------*/
+.lobbyBodyWrapper{
+  display: flex;
+  flex-grow: 1
+}
+
+
+
+.lobbyWrapper{
+  /* border: 2px solid black; */
+  flex-grow: 1;
+  background-color: rgba(20, 25, 255, .1);
+  /* margin: 2em 0 2em 0; */
+  /* border-radius: 10px 0 0 0; */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 5px 10px black;
+  height: 100%;
+}
+
+.lobbyHeader{
+  height: 10vh;
+  width: 100%;
+  background-color: rgb(19, 24, 255);
+  display: flex;
+  justify-content: center;
+  color: #fff;
+  font-family: 'Ramabhadra', sans-serif;
+  font-weight: bold;
+  font-size: 1.5em;
+  padding: .5em 0;
+  /* box-sizing: border-box; */
+}
+.lobbyDisplay{
+  display: flex;
+  flex-direction: column;
+  height: 80vh;
+  width: 100%;
+  background-color: rgba(20, 25, 255, .1);
+}
+
+.lobbyFooter{
+  height: 10vh;
+  width: 100%;
+  padding: .5em;
+  /* background-color: rgb(19, 24, 255); */
+  /* background-color: #fff; */
+  /* border-top: 2px solid black; */
+  
+}
+.gameItemWrapper{
+  background-color: #fff;
+  display: flex;
+  justify-content: space-between;
+  height: 3em;
+  width: 98%;
+  padding: .5em;
+  margin: 1%;
+  box-shadow: 0 0 10px black;
+}
+
+.joinGameButton{
+  background-color: rgb(19, 24, 255);
+  color: #fff;
+  width: 5em;
+  font-size: 1.5em;
+  border: none;
+}
+
+.joinGameButton:hover{
+  box-shadow: 0 0 20px rgb(19, 24, 255);
+  background-color: #a4fff3;
+  color: rgb(19, 24, 255);
+}
+
+/*----------End Lobby -------------*/
+/*----------Start Game Modal ------*/
+
+.gameModalHeader{
+  border-bottom: 1px solid lightblue;
+  padding: .5em;
+  font-size: 1.5em;
+}
+
+.gameModalBodyItem{
+  margin: .5em;
+}
+
+.gameName{
+  display: flex;
+  padding: .5em;
+}
+
+.gameName > h4{
+  padding-right: 1em;
+  margin-left: -.5em;
+}
+
+.gameName > input{
+  border: none;
+  box-shadow: 0 0 10px lightblue;
+  padding: .5em;
+  border-radius: 5px;
+}
+
+.timeTable > tbody > tr > td{
+  padding: .5em;
+}
+.timeTable > tbody > tr > td > input{
+  margin: .5em;
+}
+
+.gameModalFooter{
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid lightblue;
+  padding: .5em;
+}
+
+
+/*----------End Game Modal --------*/
+/*----------Start Generic ---------*/
+
+.genBtn{
+  padding: .75em;
+  color: #fff;
+  background-color:  rgb(19, 24, 255);
+  font-size: 1em;
+  border-radius: 30px;
+  margin: .25em;
+  border: none;
+}
+
+.genBtn:hover{
+  /* box-shadow: 0 0 20px rgb(19, 24, 255); */
+  background-color: #a4fff3;
+  color: rgb(19, 24, 255);
+}
+
+.genBtn:active{
+  background-color:  rgb(19, 24, 255);
+  color: black;
+  border: 1px solid black;
+  outline: none;
+}
+
+.genBtn:focus{
+  outline:none;
+}
+
+/*----------End Generic -----------*/
+/*----------Start User Info ---------*/
+
+.playerInfoWrapper{
+  width: 20vw;
+  height: 100vh;
+  /* border-right: 5px solid black; */
+  display: flex;
+  flex-direction: flex-start;
+  z-index: 0;
+}
+.userInfoInput{
+  width: 15vw;
+  height: 100vh;
+  background-color: rgba(20, 25, 255, .1);
+}
+.userInfoSidebar{
+  width: 5vw;
+  height: 100vh;
+  /* border-right: 5px solid black; */
+}
+
+.playerInfoHeader{
+  padding: .5em 0;
+  display: flex;
+  justify-content: center;
+  color: #fff;
+  font-family: 'Ramabhadra', sans-serif;
+  font-weight: bold;
+  font-size: 1.5em;
+  background-color: rgba(19, 24, 255);
+  height: 10vh;
+}
+
+.playerInfoBody{
+  height: 80vh;
+  background-color: rgba(20, 25, 255, .1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.playerInfoCard{
+  background-color: #fff;
+  box-shadow: 0 0 10px black;
+  height: 70%;
+  width: 80%;
+  margin: 15% 10%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.playerInfoCard > img{
+  flex-grow: 0;
+  flex-shrink: 0;
+  height: 8em;
+  width: 8em;
+  border-bottom: 1px solid lightblue;
+}
+
+.playerInfoCardBody{
+  width: 100%;
+  padding: 1em .5em;
+  display: flex;
+  flex-direction: column;
+  
+}
+
+.playerInfoCardBody > label{
+  display: block;
+  padding-bottom: .5em;
+}
+
+.playerInfoCardBody > input{
+  display: block;
+  border: none;
+  box-shadow: 0 0 10px lightblue;
+  padding: .5em;
+  border-radius: 5px;
+}
+
+/*----------End User Info -----------*/
+/*----------Start Player Info------------*/
+.playerScoreCard{
+  background-color: #fff;
+  height: 45%;
+  width: 80%;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 0 20px lightblue;
+}
+
+.playerScoreCardHeader{
+  background-color: rgba(19, 24, 255);
+  color: #fff;
+  text-align: center;
+  padding: .5em;
+}
+.playerInfoIcon{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(20, 25, 255, .1);
+  padding: .5em 0;
+  border-bottom: 5px solid rgba(19, 24, 255);
+  flex-direction: column;
+}
+
+.playerInfoIcon > img{
+  height: 5em;
+  width: 5em;
+}
+
+.playerInfoIcon > h4{
+  color: rgba(19, 24, 255);
+  padding-top: .5em;
+  /* font-weight: bold; */
+  /* font-family: 'Ramabhadra', sans-serif; */
+}
+
+.playerScoreCardBody{
+  width: 100%;
+}
+
+.playerScoreCardBody > div{
+  height: 2em;
+  /* border-bottom: 1px solid rgba(19, 24, 255); */
+  display: flex;
+  align-items: center;
+  margin: .5em 0;
+}
+
+.playerScoreCardBody > div > h4{
+  padding: 0 .5em;
+  width: 60%;
+}
+
+.playerScoreCardBody > div > p{
+  font-weight: bold;
+  width: 40%;
+}
+
+/*----------End Player Info--------------*/
+
