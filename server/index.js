@@ -42,7 +42,9 @@ app.use(sharedsession(session));
 
 //create lobby namespace, not sure if this is really
 //needed but I was running into issues not doing this
-const lobby = io.of('/');
+const lobby = io.of('/').use(sharedsession(session, {
+    autoSave: true
+}));
 //I believe this is causing trouble but without it I can't access
 //session at all
 lobby.use(sharedsession(session));
@@ -120,7 +122,9 @@ setInterval(() => lobby.emit('checkChanges', lobbyData.timestamp), 1000);
 
 
 
-const gameNsp = io.of('/game');
+const gameNsp = io.of('/game').use(sharedsession(session, {
+    autoSave: true
+}));
 gameNsp.use(sharedsession(session))
 gameNsp.on('connection', socket => {
     // console.log(socket)
