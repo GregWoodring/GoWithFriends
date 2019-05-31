@@ -1,11 +1,11 @@
 const express = require('express');
 const path = require('path'); 
 // const secret = require('./secret');
-const secret = {
-    sessionSecret: '6K+p!sHK$yul:tS"E%-)!o}.QZJH@L'
-}
+// const secret = {
+//     sessionSecret: '6K+p!sHK$yul:tS"E%-)!o}.QZJH@L'
+// }
 let session = require('express-session')({
-    secret: secret.sessionSecret,
+    secret: '6K+p!sHK$yul:tS"E%-)!o}.QZJH@L',
     resave: true,
     saveUninitialized: true
 });
@@ -26,7 +26,7 @@ io.set('transports', ['websocket']);
 let sharedsession = require('express-socket.io-session');
 
 io.use(sharedsession(session, {
-    autoSave: true
+    autoSave: true 
 }))
 
 let lobbyData = require('./controllers/lobbyController');
