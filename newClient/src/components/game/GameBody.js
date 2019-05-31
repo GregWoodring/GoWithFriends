@@ -85,8 +85,7 @@ class GameBody extends Component{
         //need to redo how I'm doing this connection likely wss://obscure-thicket-97287.herokuapp.com/${process.env.PORT || 3001}
         let socket = io.connect(`/game`,{ 
             reconnect: true,
-            transports: ['websocket'],
-            forceNew: true
+            transports: ['websocket']
 
         });
         //upon recieving connection inialize events
