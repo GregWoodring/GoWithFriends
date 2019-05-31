@@ -49,6 +49,10 @@ lobby.use(sharedsession(session));
 //When the lobby recieves a new connection it will be passed the client's
 //socket, which we can add event handlers on
 lobby.on('connection', function (socket) {
+    console.log("lobbyData", lobbyData);
+    console.log("users", lobbyData.users);
+    console.log("data sent", lobbyData.Data());
+    console.log("cookie of connected user:", socket.handshake.headers.cookie);
     //First we emit back to the client to tell it that we recieved it's
     //connection, this allows it to initialize it's events
     socket.emit('connectedToLobby');
