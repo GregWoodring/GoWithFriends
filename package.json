@@ -5,7 +5,7 @@
   "main": "server/index.js",
   "scripts": {
     "start": "node server/index.js",
-    "build": "cd go-with-friends/ && pwd"
+    "build": "npm i go-with-friends/ && npm run build go-with-friends/"
   },
   "keywords": [],
   "author": "",
