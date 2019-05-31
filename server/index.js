@@ -16,8 +16,8 @@ let io = require('socket.io')(server, {
 });
 let port = process.env.PORT || 3001;
 
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'go-with-friends/build', 'index.html'))
+app.get('/*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'build', 'index.html'))
 })
 //this will prevent socket.io from using ajax, so that
 //it can be freely used as a redundancy.
