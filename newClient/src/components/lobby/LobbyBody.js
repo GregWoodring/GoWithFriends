@@ -28,7 +28,8 @@ class LobbyBody extends Component{
        
 
         let socket = io.connect('/',{
-            transports: ['websocket']
+            transports: ['websocket'],
+            forceNew: true
         });
 
         //Create Socket Connection, wait for 
