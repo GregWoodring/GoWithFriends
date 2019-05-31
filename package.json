@@ -3,10 +3,17 @@
   "version": "1.0.0",
   "description": "",
   "main": "server/index.js",
+  "engines": {
+    "node": "10.x"
+  },
   "scripts": {
     "start": "node server/index.js",
-    "build": "cd ./go-with-friends && npm install && npm install --only=dev --no-shrinkwrap && npm run Abuild"
+    "build": "cd go-with-friends/ && npm install && npm install --only=dev --no-shrinkwrap && npm run Abuild"
   },
+  "cacheDirectories": [
+    "node_modules",
+    "go-with-friends/node_modules"
+  ],
   "keywords": [],
   "author": "",
   "license": "ISC",
