@@ -16,7 +16,8 @@ let io = require('socket.io')(server, {
 });
 let port = process.env.PORT || 3001;
 
-app.get('/*', (req, res) => {
+app.use( express.static( `${__dirname}/../newClient/build` ) );
+app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '../newClient/build', 'index.html'))
 })
 //this will prevent socket.io from using ajax, so that
