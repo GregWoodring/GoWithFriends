@@ -59,6 +59,12 @@ class GameController{
         this.gameEnd= false;
         this.whiteKo= [];
         this.blackKo= [];
+        this.lastClockInterval;
+        this.byoYomi = null;
+        this.byoYomiBlack = false;
+        this.byoYomiWhite = true;
+        this.blackTime = 0;
+        this.whiteTime = 0;
 
         this.messages = [];
         // this.userCount = 1;
@@ -71,10 +77,82 @@ class GameController{
         } else if(user.role === "white"){
             this.whiteUser = user;
         } 
-        
+        //bind all the methods
         this.updateUsers = this.updateUsers.bind(this);
         this.returnUsers = this.returnUsers.bind(this);
         this.returnData = this.returnData.bind(this);
+        this.initializeTime = this.initializeTime.bind(this);
+        this.convertTime = this.convertTime.bind(this);
+        this.startClock = this.startClock.bind(this);
+        this.addMessage = this.addMessage.bind(this);
+
+        //properties that are set by class methods
+        this.initializeTime();
+        this.blackTimeDisplay = this.convertTime(this.blackTime);
+        this.whiteTimeDisplay = this.convertTime(this.whiteTime);
+    }
+
+    initializeTime(){
+        if(this.gameTime === 'blitz'){
+            this.byoYomi = 60;
+            this.blackTime = 60;
+            this.whiteTime = 60;
+            this.byoYomiBlack = true;
+            this.byoYomiWhite = true;
+        } else if(this.gameTime === 'long'){
+            return 0;
+        } else { //standard
+            this.byoYomi = 30;
+            this.blackTime = 30 * 60; //30 mins
+            this.whiteTime = 30 * 60;
+            this.byoYomiBlack = false;
+            this.byoYomiWhite = false;
+        }
+    }
+
+    convertTime(time){
+        if(!time) return 'N/A';
+        let minutes = Math.floor(time / 60);
+        let seconds = Math.floor(time % 60);
+        let display = '';
+        if(minutes){
+            return `${minutes < 10 ? '0' + minutes : minutes}:${seconds < 10 ? '0' + seconds : seconds}`
+        } else{
+            return `${seconds < 10 ? '0' + seconds: seconds}s`
+        }
+    }
+
+    startClock(){
+        if(!this.blacksTurn){
+            if(this.byoYomiBlack === true){
+                this.blackTime = this.byoYomi;
+            }
+            this.lastClockInterval = setInterval(() => {
+                
+                this.blackTimeDisplay = this.convertTime(this.blackTime--);
+                this.timestamp++;
+                if(this.blackTime <= 0){
+                    clearInterval(this.lastClockInterval);
+                    this.handlePass(this.blackUser.userId);
+                    this.byoYomiBlack = true;
+                }
+            }, 1000)
+        } else{
+            if(this.byoYomiWhite === true){
+                this.whiteTime = this.byoYomi;
+            }
+            this.lastClockInterval = setInterval(() => {
+                this.whiteTimeDisplay = this.convertTime(this.whiteTime--);
+                this.timestamp++;
+                if(this.whiteTime <= 0){
+                    clearInterval(this.lastClockInterval);
+                    this.handlePass(this.whiteUser.userId);
+                    this.whiteTime = this.byoYomi;
+                    this.byoYomiWhite = true;
+                }
+            }, 1000)
+        }
+
     }
 
     returnUsers(){
@@ -102,15 +180,14 @@ class GameController{
         let whiteKo = this.whiteKo;
         let blackKo = this.blackKo;
         let usersArr = [];
+        let blackTimeDisplay = this.blackTimeDisplay;
+        let whiteTimeDisplay = this.whiteTimeDisplay;
+        let messages = this.messages;
 
         for(let user in this.users){
-            let {userId, 
-                userName,
-                ranking} = this.users[user]
+            
             usersArr.push({
-                userId, 
-                userName,
-                ranking
+                ...this.users[user]
             });
         }
 
@@ -134,12 +211,40 @@ class GameController{
             gameEnd,
             whiteKo,
             blackKo, 
-            users: usersArr
+            users: usersArr,
+            blackTimeDisplay,
+            whiteTimeDisplay,
+            messages
         }
     }
 
-    addMessage(cookie, text){
-        //TODO
+    addMessage(messageId, data, deleteItem){
+        console.log('got message')
+        let index = this.messages.findIndex(item => {
+            return item.messageId === messageId
+        })
+        if(deleteItem){
+            if(index > 0){
+                this.messages.splice(index, 1);
+                this.timestamp++;
+            } else{
+                console.log('deleteItem not found');
+                throw Error(`Cannot delete message that does not exist at index: ${index}`)
+            }
+        } else {
+            if(index > 0){
+                this.messages[index] = data;
+                this.timestamp++;
+                return true;
+            } else {
+                this.messages.push(data);
+                if(this.messages.length > 100){
+                    this.messages = this.messages.slice(0, 100);
+                }
+                this.timestamp++;
+                return false;
+            }
+        }
     }
 
     syncUser(userId){
@@ -406,6 +511,15 @@ class GameController{
             }
         // Check that position is empty and that the game has not ended
         if(this.positions[posY][posX] === 0 && !this.gameEnd){
+            
+            //if not a long game, stop the last clock and start a new one
+            if(this.gameTime !== 'long'){
+                if(this.lastClockInterval){
+                    clearInterval(this.lastClockInterval);
+                }
+                this.startClock();
+            }
+            
             //Check that players are not attempting to play in a space restricted by the rule of Ko
             if((this.blacksTurn && this.blackKo && this.checkIncludes(this.blackKo, [posX, posY]))
             || (!this.blacksTurn && this.whiteKo && this.checkIncludes(this.whiteKo, [posX, posY]))){

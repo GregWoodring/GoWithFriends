@@ -59,13 +59,15 @@ class GameBody extends Component{
             blacksTurn: true,
             turnNumber: 0,
             blackScore: 0,
-            whiteScore: 0,
+            whiteScore: 7.5,
             whitePass: false,
             blackPass: false,
             gameEnd: false,
             whiteKo: [],
             blackKo: [],
             socket: {},
+            blackTimeDisplay: 'N/A',
+            whiteTimeDisplay: 'N/A',
 
             timestamp: 0,
             blackUser: null,
@@ -76,6 +78,7 @@ class GameBody extends Component{
             gameTime: '',
             userCount: 0,
             users: [],
+            user: {},
 
             messages: []
         }
@@ -86,7 +89,7 @@ class GameBody extends Component{
     componentWillMount(){
         //upon loading game body connect to game namespace
         //need to redo how I'm doing this connection likely wss://obscure-thicket-97287.herokuapp.com/${process.env.PORT || 3001}
-        let socket = io.connect(`/game`,{ 
+        let socket = io.connect(`localhost:3001/game`,{ 
             reconnect: true,
             transports: ['websocket']
 
@@ -94,8 +97,13 @@ class GameBody extends Component{
         //upon recieving connection inialize events
         socket.on('connectedToGame', () => {
             let room = this.props.match.params.roomId
-            console.log('starting Game')
-            socket.emit('joinRoom', room)
+            console.log('starting Game');
+            socket.emit('joinRoom', room);
+
+            //This event will maintain the state of our
+            //game, I will be moving all the logic for the game
+            //server-side, but will still keep all the data stored 
+            //in the client for redundancy (I believe)
             socket.on('updateRoomInfo', data => {
                 let {
                     blackUser,
@@ -117,7 +125,10 @@ class GameBody extends Component{
                     gameEnd,
                     whiteKo,
                     blackKo,
-                    users
+                    users,
+                    blackTimeDisplay,
+                    whiteTimeDisplay,
+                    messages
                 } = data;
                 this.setState({
                     blackUser,
@@ -139,8 +150,13 @@ class GameBody extends Component{
                     gameEnd,
                     whiteKo,
                     blackKo,
-                    users
+                    users,
+                    blackTimeDisplay,
+                    whiteTimeDisplay,
+                    messages,
+                    user: users.find(item => item.userId = this.props.userId)
                 })
+
             })
 
             socket.on('checkRoomUpdates', timestamp => {
@@ -151,48 +167,6 @@ class GameBody extends Component{
                 //using this to track disconnected players
                 socket.emit('inSync', this.props.userId, this.state.roomId);
             })
-
-            //This event will maintain the state of our
-            //game, I will be moving all the logic for the game
-            //server-side, but will still keep all the data stored 
-            //in the client for redundancy (I believe)
-            socket.on('maintainState', data => {
-                console.log('maintainstate', data)
-                let {
-                    history,
-                    positions,
-                    blacksTurn,
-                    turnNumber,
-                    blackScore,
-                    whiteScore,
-                    whitePass,
-                    blackPass,
-                    gameEnd,
-                    whiteKo,
-                    blackKo
-                } = data;
-
-                this.setState({
-                    history,
-                    positions,
-                    blacksTurn,
-                    turnNumber,
-                    blackScore,
-                    whiteScore,
-                    whitePass,
-                    blackPass,
-                    gameEnd,
-                    whiteKo,
-                    blackKo,
-                    socket
-                })
-            })
-
-
-
-            //This will either create a new game instance
-            //or will join an existing one
-            
 
             this.setState({
                 socket
@@ -495,7 +469,11 @@ class GameBody extends Component{
     //----------------------------------------------------------------------------------------------
 
     sendMessageData = data =>{
-        this.state.socket.emit('sendMessage', data);
+        if(this.state.socket){
+            data.roomId = this.state.roomId;
+            this.state.socket.emit('sendMessage', data);
+        }
+        console.log('user', this.state.user)
     }
     componentWillUnmount(){
         if(this.state.socket){
@@ -519,6 +497,10 @@ class GameBody extends Component{
                     <PlayerInfo 
                         blackUser={this.state.blackUser}
                         whiteUser={this.state.whiteUser}
+                        blackScore={this.state.blackScore}
+                        whiteScore={this.state.whiteScore}
+                        blackTimeDisplay={this.state.blackTimeDisplay}
+                        whiteTimeDisplay={this.state.whiteTimeDisplay}
                     />
                     <div className="boardContainer">
                         <header className="lobbyHeader">
@@ -555,10 +537,10 @@ class GameBody extends Component{
                         socket={this.state.socket}
                         users={this.state.users}
                         userId={this.state.userId}
-                        userName={this.state.userName}
+                        userName={this.state.user.userName}
                         messages={this.state.messages}
                         sendMessageData={this.sendMessageData}
-                        userImg={this.state.userImg}
+                        userImg={this.state.user.userIcon}
                     />
                 </div>
             )

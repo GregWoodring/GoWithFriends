@@ -10,6 +10,7 @@ export default class PlayerInfo extends Component{
     }
 
     render(){
+        let defaultImg = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQrujGCbLhGM5ArEOARP_VMgCIverdQVprmRMoLGW5WU0yaB7oI";
         return(
             <div className="playerInfoWrapper">
                 <div className="userInfoSidebar">
@@ -25,17 +26,17 @@ export default class PlayerInfo extends Component{
                                 <h3>Black</h3>
                             </div>
                             <div className="playerInfoIcon">
-                                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQrujGCbLhGM5ArEOARP_VMgCIverdQVprmRMoLGW5WU0yaB7oI" alt="user" />
+                                <img src={this.props.blackUser ? this.props.blackUser.userIcon : defaultImg} alt="userBlack" />
                                 <h4>{this.props.blackUser ? this.props.blackUser.userName : 'N/A'}</h4>
                             </div>
                             <div className="playerScoreCardBody">
                                 <div>
                                     <h4>Game Time:</h4>
-                                    <p>0:00</p>
+                                    <p>{this.props.blackTimeDisplay}</p>
                                 </div>
                                 <div>
                                     <h4>Score:</h4>
-                                    <p>0</p>
+                                    <p>{this.props.blackScore}</p>
                                 </div>
                             </div>
                         </div>
@@ -44,17 +45,17 @@ export default class PlayerInfo extends Component{
                                 <h3>White</h3>
                             </div>
                             <div className="playerInfoIcon">
-                                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQrujGCbLhGM5ArEOARP_VMgCIverdQVprmRMoLGW5WU0yaB7oI" alt="user" />
+                                <img src={this.props.whiteUser ? this.props.whiteUser.userIcon : defaultImg} alt="userWhite" />
                                 <h4>{this.props.whiteUser ? this.props.whiteUser.userName : 'N/A'}</h4>
                             </div>
                             <div className="playerScoreCardBody">
                                 <div>
                                     <h4>Game Time:</h4>
-                                    <p>0:00</p>
+                                    <p>{this.props.whiteTimeDisplay}</p>
                                 </div>
                                 <div>
                                     <h4>Score:</h4>
-                                    <p>0</p>
+                                    <p>{this.props.whiteScore}</p>
                                 </div>
                             </div>
                         </div>

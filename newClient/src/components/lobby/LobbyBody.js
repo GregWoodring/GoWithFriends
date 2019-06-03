@@ -27,7 +27,7 @@ class LobbyBody extends Component{
     componentWillMount(){
        
         console.log('mounting')
-        let socket = io.connect('/',{
+        let socket = io.connect('localhost:3001/',{
             transports: ['websocket']
         });
         console.log(socket)
@@ -88,8 +88,13 @@ class LobbyBody extends Component{
         })
     }
 
-    updateUserName = async e => {
-        await this.setState({userName: e.target.value});
+    updateUserName = async text => {
+        await this.setState({userName: text});
+        this.updateUserData();
+    }
+    
+    updateUserIcon = async icon => {
+        await this.setState({userImg: icon});
         this.updateUserData();
     }
 
@@ -103,7 +108,8 @@ class LobbyBody extends Component{
             this.state.socket.emit('updateUser', {   
                 userId: this.state.userId,
                 userName: this.state.userName,
-                ranking: this.state.ranking 
+                ranking: this.state.ranking,
+                userIcon: this.state.userImg 
             })
         }
     }
@@ -159,6 +165,7 @@ class LobbyBody extends Component{
                         userName={this.state.userName}
                         ranking={this.state.ranking}
                         updateUserName={this.updateUserName}
+                        updateUserIcon={this.updateUserIcon}
                         updateRanking={this.updateRanking}
                         userImg={this.state.userImg}
                     />

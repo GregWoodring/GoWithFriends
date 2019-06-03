@@ -1,13 +1,36 @@
 import React, { Component } from 'react';
+import randomItems from './randomItems';
 
 export default class UserInfo extends Component{
     constructor(props){
         super(props);
 
         this.state = {
-            userName: '',
+            userName: this.props.userName,
+            userImg: this.props.userImg,
             ranking: '30kyu',
         }
+    }
+
+    componentWillMount(){
+        this.randomize()
+    }
+
+    randomize = () => {
+        let pictureSeed = Math.floor(Math.random() * 10);
+        let firstNameSeed = Math.floor(Math.random() * 20);
+        let lastNameSeed = Math.floor(Math.random() * 20);
+
+        let name = `${randomItems.firstNames[firstNameSeed]} ${randomItems.lastNames[lastNameSeed]}`;
+        let icon = randomItems.pictures[pictureSeed];
+
+        this.setState({
+            userName: name,
+            userIcon: icon
+        })
+
+        this.props.updateUserName(name);
+        this.props.updateUserIcon(icon);
     }
 
     render(){
@@ -28,7 +51,7 @@ export default class UserInfo extends Component{
                                 <input 
                                     type="text"
                                     placeholder="User Name"
-                                    onChange={e => this.props.updateUserName(e)} 
+                                    onChange={e => this.props.updateUserName(e.target.value)} 
                                     value={this.props.userName}/>
                             </div>
                             <div className="playerInfoCardBody">
@@ -39,7 +62,10 @@ export default class UserInfo extends Component{
                                     onChange={e => this.props.updateRanking(e)} 
                                     value={this.props.ranking} />
                             </div>
-                            {/* <button className="genBtn">Submit</button> */}
+                            <button 
+                                className="genBtn"
+                                onClick={this.randomize}
+                            >Random</button>
                         </div>
                     </div>
                     <div className="playerInfoFooter">

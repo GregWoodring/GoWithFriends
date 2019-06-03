@@ -198,6 +198,12 @@ gameNsp.on('connection', socket => {
             lobbyData.rooms[data.roomId].handlePass(data.userId);
         }
     })
+
+    socket.on('sendMessage', data => {
+        let {messageId, roomId} = data;
+        console.log('roomId:', lobbyData.rooms[roomId])
+        lobbyData.rooms[roomId].addMessage(messageId, data) 
+    })
     
 });
 

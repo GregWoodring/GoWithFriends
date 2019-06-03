@@ -593,7 +593,9 @@
   flex-shrink: 0;
   height: 8em;
   width: 8em;
-  border-bottom: 1px solid lightblue;
+  box-shadow: 0 0 5px lightblue;
+  border-radius: 50%;
+  margin: .5em;
 }
 
 .playerInfoCardBody{
