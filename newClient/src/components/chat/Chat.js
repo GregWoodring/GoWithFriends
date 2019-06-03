@@ -37,6 +37,7 @@ export default class Chat extends Component{
             userId: this.props.userId
         }
         this.props.sendMessageData(data);
+        this.setState({message: ''});
     }
 
     updateMessage = e => {
@@ -71,6 +72,7 @@ export default class Chat extends Component{
                     <Compose 
                         postMessage={this.postMessage}
                         updateMessage={this.updateMessage}
+                        message={this.state.message}
                     />
                     <div className="chatFooter">
 
