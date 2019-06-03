@@ -81,15 +81,15 @@ lobby.on('connection', function (socket) {
     })
 
     socket.on('createGame', data => {
-        console.log('create game', data)
         let cookie = data.userId;
         lobbyData.createRoom(data.roomId, data.gameName, data.gameTime, data.role, cookie);
         let intervalID = setInterval(() => {
             if(lobbyData.rooms[data.roomId]){
                 gameNsp.to(data.roomId).emit('checkRoomUpdates', lobbyData.rooms[data.roomId].timestamp);
-                if(lobbyData.rooms[data.roomId].checkUserSync(data.userId)){
-                    userDisconnected(data.userId);
-                }
+                for(let userId in lobbyData.rooms[data.roomId].users)
+                    if(lobbyData.rooms[data.roomId].checkUserSync(userId)){
+                        userDisconnected(userId);
+                    }
             }
         }, 500);
             
@@ -149,7 +149,6 @@ const gameNsp = io.of('/game').use(sharedsession(session, {
 }));
 gameNsp.use(sharedsession(session))
 gameNsp.on('connection', socket => {
-    // console.log(socket)
     gameNsp.to(socket.id).emit('connectedToGame');
     socket.on('joinRoom', roomId => {
         if(lobbyData.rooms[roomId]){
@@ -186,7 +185,6 @@ gameNsp.on('connection', socket => {
     socket.on('leaving', userDisconnected);
     
     socket.on('handlePlay', data => {
-        console.log('got play')
         let cookie = data.userId
         if(lobbyData.rooms[data.roomId]){
             lobbyData.rooms[data.roomId].handlePlay(data.posX, data.posY, data.userId);
@@ -201,7 +199,6 @@ gameNsp.on('connection', socket => {
 
     socket.on('sendMessage', data => {
         let {messageId, roomId} = data;
-        console.log('roomId:', lobbyData.rooms[roomId])
         lobbyData.rooms[roomId].addMessage(messageId, data) 
     })
     

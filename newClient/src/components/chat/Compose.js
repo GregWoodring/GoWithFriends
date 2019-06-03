@@ -8,7 +8,7 @@ export default function Compose(props){
             <textarea
                 onChange={e => props.updateMessage(e)}
                 className="composeMessageArea"
-                value={this.props.message}
+                value={props.message}
             ></textarea>
             <button 
                 onClick={() => props.postMessage()}

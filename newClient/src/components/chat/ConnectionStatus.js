@@ -23,10 +23,11 @@ export default class ConnectionStatus extends Component{
                 <div 
                     key={item.userId}
                     className="userStatus">
+                    <div className='connectionStatusLight'></div> 
                    <p>{item.userName}</p>
                     <div className="connectionUserStatus">
-                        <div className='connectionStatusLight'></div> 
-                        <p>In Game</p>
+                        
+   
                     </div>
                 </div>
             )

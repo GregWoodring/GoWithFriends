@@ -69,13 +69,12 @@ export default class Chat extends Component{
                     <div className="messages">
                         {this.renderMessages()}
                     </div>
-                    <Compose 
-                        postMessage={this.postMessage}
-                        updateMessage={this.updateMessage}
-                        message={this.state.message}
-                    />
                     <div className="chatFooter">
-
+                        <Compose 
+                            postMessage={this.postMessage}
+                            updateMessage={this.updateMessage}
+                            message={this.state.message}
+                        />
                     </div>
                 </div>
                 <ConnectionStatus

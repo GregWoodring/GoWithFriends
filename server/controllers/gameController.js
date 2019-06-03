@@ -219,7 +219,6 @@ class GameController{
     }
 
     addMessage(messageId, data, deleteItem){
-        console.log('got message')
         let index = this.messages.findIndex(item => {
             return item.messageId === messageId
         })
@@ -275,8 +274,11 @@ class GameController{
                     this.blackUser = null;
                 } else if(this.users[userId].role === "white"){
                     this.whiteUser = null;
+                    console.log('white')
                 }
                 delete this.users[userId];
+
+                console.log('deleted', this.users)
             } else {
                 throw new Error(`Users ${userId} does not exist`)
             }
@@ -504,7 +506,6 @@ class GameController{
     */
 
     handlePlay(posX, posY, cookie){
-        console.log('play')
         if((this.blacksTurn && this.users[cookie].role != "black")
             || !this.blacksTurn && this.users[cookie].role != "white"){
                 return;
@@ -566,5 +567,3 @@ class GameController{
 
 module.exports = GameController;
 
-
-//

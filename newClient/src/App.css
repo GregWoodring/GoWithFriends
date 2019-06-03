@@ -215,6 +215,7 @@
   /* max-width: 20em;
   min-width: 15em; */
   height: 100%;
+  
   /* margin: 2em 2em 2em 0; */
   /* box-shadow: 0 5px 10px black;   */
   /* border-radius: 0 10px 10px 0; */
@@ -226,20 +227,20 @@
   width: 20em;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-start;
   background-color: rgba(20, 25, 255, .1);
 
 }
 
 .chatFooter{
-  height: 5vh;
+  height: 10vh;
   width: 100%;
   /* background-color: red; */
 }
 
 .messages{
   overflow: auto;
-  height: 75vh;
+  height: 80vh;
   width: 100%;
   background-color: rgba(20, 25, 255, .1);
   padding-top: .5em;
@@ -280,12 +281,12 @@
 }
 
 .composeWrapper{
-  height: 10vh;
-  width: 90%;
+  height: 100%;
+  width: 100%;
   /* border-top: 1px solid black; */
   display: flex;
   box-shadow: 0 0 10px black;
-  margin: 0 .5em;
+  /* margin: 0 .5em; */
   /* border-radius: 10px; */
 }
 
@@ -332,35 +333,46 @@
 .connectionStatusBar{
   height: 100%;
   width: 5vw;
+  min-width: 4em;
   /* border-radius: 0 10px 10px 0; */
   /* border: 1px solid black; */
   display: flex;
   flex-direction: column;
-  justify-content: fl;
 }
 .userStatus{
   background-color: #fff;
   /* z-index: ; */
   display: flex;
-  /* align-items: center; */
-  height: 4em;
-  font-size: .75em;
-  flex-direction: column;
+  align-items: center;
+  height: 4rem;
+  font-size: .65em;
+
   padding: .25em;
 }
+
 .connectionUserStatus{
   display: flex;
-  font-size: .75em;
+  font-size: .5em;
   
 }
 .connectionStatusLight{
   height: 1em;
   width: 1em;
+  min-height: 1em;
+  min-width: 1em;
   border-radius: 50%;
   background-color: green;
-  box-shadow: 0 0 10px lightgreen;
+  animation: connectionLight 5s infinite;
   margin: .25em;
+  box-shadow: 0 0 10px lightgreen;
 }
+
+@keyframes connectionLight{
+  0% {box-shadow: 0 0 10px lightgreen;}
+  50% {box-shadow: 0 0 15px green;}
+  100% {box-shadow: 0 0 10px lightgreen;}
+}
+
 .connectionStatusHeader{
   height: 10vh;
   /* margin-top: .25em; */
@@ -435,11 +447,14 @@
   background-color: #fff;
   display: flex;
   justify-content: space-between;
+  align-items: center;
   height: 3em;
   width: 98%;
   padding: .5em;
   margin: 1%;
   box-shadow: 0 0 10px black;
+  border-bottom: 5px solid rgb(19, 24, 255);
+  color: rgb(12, 13, 77);
 }
 
 .joinGameButton{
@@ -702,31 +717,48 @@
   width: 30em;
   border-radius: 50%;
   animation: connecting 5s infinite;
+  animation-fill-mode: forwards;
+  animation-timing-function: linear;
   box-sizing: content-box;
+  border-top: 5px solid rgba(20, 25, 255);
+  border-right: none;
+  border-bottom: 5px solid rgba(20, 25, 255, .5);
+  border-left: none;
 }
 
 .innerConnection > h1{
   text-shadow: 0 0 10px rgba(20, 25, 255);
   padding: 2em;
+  transform: none;
 }
 
 @keyframes connecting{
   0% {
-    border-top: 5px solid rgba(20, 25, 255);
-    /* border-right: 5px solid rgba(20, 25, 255); */
+    transform: rotate(0deg);
+    box-shadow: 0 0 5px rgba(20, 25, 255);
   }
-  33% {
-    border-right: 5px solid rgba(20, 25, 255);
-    /* border-bottom: 5px solid rgba(20, 25, 255); */
-  }
-  66% {
-    border-bottom: 5px solid rgba(20, 25, 255);
-    /* border-left: 5px solid rgba(20, 25, 255); */
+  50%{
+    box-shadow: 0 0 10px rgba(20, 25, 255);
   }
   100% {
-    border-left: 5px solid rgba(20, 25, 255);
-    /* border-top: 5px solid rgba(20, 25, 255); */
+    transform: rotate(360deg);
+    box-shadow: 0 0 20px rgba(20, 25, 255);
   }
+    /* border-right: 5px solid rgba(20, 25, 255); */
+  
+  /* 33% {
+    
+    transform: rotate(90deg)
+    /* border-bottom: 5px solid rgba(20, 25, 255); 
+  } */
+  /* 100% {
+    
+   transform: rotate(360deg)
+    /* border-left: 5px solid rgba(20, 25, 255); */
+  
+  /* 100% {
+   transform: rotate(360deg) 
+  } */
 }
 
 /*-------End Connection Screen------------*/
