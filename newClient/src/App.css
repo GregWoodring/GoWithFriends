@@ -62,13 +62,69 @@
 .gameBody{
   display: flex;
   justify-content: space-around;
+  
+
 }
 
 .boardContainer{
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: flex-start;
+  height: 100vh;
+  background-color: rgba(20, 25, 255, .1);
+  width:60vw;
+  box-shadow: 0 0 15px black;
+}
+.boardBody{
+  background-color: rgba(20, 25, 255, .1);
+  width:100%;
+  height: 80vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   justify-content: space-around;
+  /* z-index: ; */
+}
+
+.boardFooter{
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btnBoard{
+  background-color: rgba(20, 25, 255);
+  color: #fff;
+  font-weight: bolder;
+  margin-top: 1.5em;
+  border: none;
+  padding: .75em;
+  width: 7.5em;
+  font-size: .75em;
+}
+
+.btnBoard:focus{
+  outline: none;
+}
+
+.btnBoard:active{
+  color:black;
+}
+
+.btnBoard:hover{
+  background-color: #a4fff3;
+  color:rgba(20, 25, 255);
+}
+
+.btnBackwards{
+  border-radius: 100% 0 0 100%;
+}
+
+.btnForwards{
+  border-radius: 0 100% 100% 0;
+
 }
 
 /*---------- End Game Body --------------*/
@@ -128,8 +184,8 @@
 }
 
 .blackPiece{
-  height: 1em;
-  width: 1em;
+  height: 1.1em;
+  width: 1.1em;
   background-color: black;
   border-radius: 50%;
   position: absolute;
@@ -140,8 +196,8 @@
 }
 
 .whitePiece{
-  height: 1em;
-  width: 1em;
+  height: 1.1em;
+  width: 1.1em;
   background-color: #fff;
   border-radius: 50%;
   position: absolute;
@@ -495,6 +551,7 @@
   width: 5vw;
   height: 100vh;
   /* border-right: 5px solid black; */
+
 }
 
 .playerInfoHeader{
@@ -516,6 +573,7 @@
   flex-direction: column;
   justify-content: space-evenly;
   align-items: center;
+  /* border-right: 5px solid rgba(20, 25, 255, .1); */
 }
 
 .playerInfoCard{
@@ -621,4 +679,5 @@
 }
 
 /*----------End Player Info--------------*/
+
 

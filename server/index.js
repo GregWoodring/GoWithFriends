@@ -17,9 +17,7 @@ let io = require('socket.io')(server, {
 let port = process.env.PORT || 3001;
 
 app.use( express.static( `${__dirname}/../newClient/build` ) );
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../newClient/build', 'index.html'))
-})
+
 //this will prevent socket.io from using ajax, so that
 //it can be freely used as a redundancy.
 io.set('transports', ['websocket']);
@@ -32,6 +30,10 @@ io.use(sharedsession(session, {
 let lobbyData = require('./controllers/lobbyController');
 
 app.use(sharedsession(session));
+
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../newClient/build', 'index.html'))
+})
 
 
 //should move this later to a new 
@@ -73,8 +75,9 @@ lobby.on('connection', function (socket) {
     });
 
     socket.on('updateUser', data => {
-        let {cookie} = socket.handshake.headers;
+        let cookie = data.userId;
         lobbyData.updateUsers(cookie, data);
+        console.log('users', lobbyData.users)
     })
 
     socket.on('updateMessages', data => {
@@ -83,7 +86,8 @@ lobby.on('connection', function (socket) {
     })
 
     socket.on('createGame', data => {
-        let {cookie} = socket.handshake.headers;
+        console.log('create game', data)
+        let cookie = data.userId;
         lobbyData.createRoom(data.roomId, data.gameName, data.gameTime, data.role, cookie);
         let intervalID = setInterval(() => {
             if(lobbyData.rooms[data.roomId]){
@@ -95,10 +99,16 @@ lobby.on('connection', function (socket) {
     })
 
     socket.on('joinGame', data => {
-        let {cookie} = socket.handshake.headers;
+        console.log(data)
+        console.log('users: join:', lobbyData.users)
+        let cookie = data.userId;
         let user = lobbyData.users[cookie];
         user.role = data.role;
         lobbyData.rooms[data.roomId].updateUsers(cookie, user);
+    })
+
+    socket.on('inSync', userId => {
+        lobbyData.syncUser(userId);
     })
 
 
@@ -115,7 +125,12 @@ lobby.on('connection', function (socket) {
 //Check for updates on interval, send timestamp
 //client will check it's timestamp in state, if timestamp
 //is different emit update event and send lobby state
-setInterval(() => lobby.emit('checkChanges', lobbyData.timestamp), 1000);
+setInterval(() => {
+    lobby.emit('checkChanges', lobbyData.timestamp)
+    for(let userId in lobbyData.users){
+        lobbyData.checkUserSync(userId);
+    }
+}, 1000);
 
 
 
@@ -141,8 +156,26 @@ gameNsp.on('connection', socket => {
         gameNsp.to(socket.id).emit('updateRoomInfo', lobbyData.rooms[roomId].returnData());
     })
 
-    function userDisconnected(){
-        let {cookie} = socket.handshake.headers
+    socket.on('sendMessage', roomId => {
+        lobbyData.rooms[roomId]
+    })
+
+    socket.on('inSync', (userId, roomId) => {
+        lobbyData.rooms[roomId].syncUser(userId);
+    })
+
+
+    //On disconnect remove the user from the users hash and update 
+    //users on connected client
+    // socket.on('disconnect', () => {
+    //     let {cookie} = socket.handshake.headers
+    //     lobbyData.updateUsers(cookie, {}, true)
+    // })
+    
+// });
+
+    function userDisconnected(userId){
+        let cookie = userId
             for(let room in lobbyData.rooms){
                 if(lobbyData.rooms[room].users[cookie]){
                     console.log('user disconnected')
@@ -160,16 +193,15 @@ gameNsp.on('connection', socket => {
     
     socket.on('handlePlay', data => {
         console.log('got play')
-        let {cookie} = socket.handshake.headers;
+        let cookie = data.userId
         if(lobbyData.rooms[data.roomId]){
-            lobbyData.rooms[data.roomId].handlePlay(data.posX, data.posY, cookie);
+            lobbyData.rooms[data.roomId].handlePlay(data.posX, data.posY, data.userId);
         }
     })
 
     socket.on('handlePass', data => {
-        let {cookie} = socket.handshake.headers;
         if(lobbyData.rooms[data.roomId]){
-            lobbyData.rooms[data.roomId].handlePass(cookie);
+            lobbyData.rooms[data.roomId].handlePass(data.userId);
         }
     })
     

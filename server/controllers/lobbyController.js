@@ -48,6 +48,22 @@ let lobbyData = {
                 messages: this.messages}
     },
 
+    syncUser(userId){
+        if(this.users[userId]){
+            this.users[userId].inSync = true;
+            this.users[userId].desyncCount = 0;
+        }
+    },
+
+    checkUserSync(userId){
+        if(!this.users[userId].inSync){
+            this.users[userId].desyncCount++;
+            if(this.users[userId].desyncCount > 120){
+                updateUsers(userId, {}, true);
+            }
+        }
+    },
+
     updateUsers: function(cookie, data, deleteItem){
         if(deleteItem){
             if(this.users[cookie]){
@@ -62,6 +78,8 @@ let lobbyData = {
             if(this.users[cookie]) exists = true;
 
             this.users[cookie] = data;
+            this.users[cookie].inSync = true;
+            this.users[cookie].desyncCount = 0;
             this.timestamp++;
 
             return exists;
@@ -122,6 +140,9 @@ let lobbyData = {
         if(this.rooms[roomId]) throw new Error(`Game ${gameName} with roomId: ${roomId} already exists, cannot create.`);
         
         let user = this.users[cookie];
+        console.log('cookie,', cookie)
+        console.log('these users', this.users)
+        console.log('user', user)
         user.role = role;
         let users = {};
         users[cookie] = user;

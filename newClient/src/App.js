@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { Component } from 'react';
 import './App.css';
 import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom';
+import uuidvi from 'uuid/v1';
 
 //components
 import GameBody from './components/game/GameBody'
@@ -12,20 +13,34 @@ import LobbyBody from './components/lobby/LobbyBody';
 
 
 
-function App() {
-  return (
-    <Router
-    >
-          <div
-            className='App'
-            >
-              <Switch>
-                <Route path="/" exact component={LobbyBody} />
-                <Route path="/game/:roomId" component={GameBody} />
-              </Switch>
-          </div>
-    </Router>
-  );
+class App extends Component {
+  constructor(props){
+    super(props);
+
+    this.state = {
+      userId: uuidvi()
+    }
+  }
+
+  render(){
+    return (
+      <Router
+      >
+            <div
+              className='App'
+              >
+                <Switch>
+                  <Route path="/" exact 
+                  render={(props) => <LobbyBody userId={this.state.userId} />}
+                   />
+                  <Route path="/game/:roomId" 
+                  render={(props) => <GameBody userId={this.state.userId} />}
+                  />
+                </Switch>
+            </div>
+      </Router>
+    );
+  }
 }
 
 export default App;

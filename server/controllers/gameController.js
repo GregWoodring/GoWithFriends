@@ -59,6 +59,8 @@ class GameController{
         this.gameEnd= false;
         this.whiteKo= [];
         this.blackKo= [];
+
+        this.messages = [];
         // this.userCount = 1;
 
         let user = Object.keys(users)[0];
@@ -99,6 +101,18 @@ class GameController{
         let gameEnd = this.gameEnd;
         let whiteKo = this.whiteKo;
         let blackKo = this.blackKo;
+        let usersArr = [];
+
+        for(let user in this.users){
+            let {userId, 
+                userName,
+                ranking} = this.users[user]
+            usersArr.push({
+                userId, 
+                userName,
+                ranking
+            });
+        }
 
         return {
             blackUser,
@@ -119,7 +133,26 @@ class GameController{
             blackPass,
             gameEnd,
             whiteKo,
-            blackKo
+            blackKo, 
+            users: usersArr
+        }
+    }
+
+    addMessage(cookie, text){
+        //TODO
+    }
+
+    syncUser(userId){
+        this.users[userId].inSync = true;
+        this.users[userId].desyncCount = 0;
+    }
+
+    checkUserSync(userId, cb){
+        if(!this.users[userId].inSync){
+            this.users[userId].desyncCount++;
+            if(this.users[userId].desyncCount > 120){
+                updateUsers(userId, {}, true);
+            }
         }
     }
 
@@ -144,6 +177,8 @@ class GameController{
             //here.
             if(this.users[userId]){
                 this.users[userId] = data;
+                this.users[userId].inSync = true;
+                this.users[userId].desyncCount = 0;
             } else {
                 //New User joins
 
@@ -161,7 +196,8 @@ class GameController{
 
                 //Add user to user Object and increment the usercount
                 this.users[userId] = data;
-                // this.userCount++;
+                this.users[userId].inSync = true;
+                this.users[userId].desyncCount = 0;
             }
         }
         this.timestamp++;

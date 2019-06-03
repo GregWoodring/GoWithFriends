@@ -19,7 +19,7 @@ class LobbyBody extends Component{
             ranking: '30Kyu',
             userImg: 'data:image/jpeg;base64,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',
             timestamp: 0,
-            userId: uuidvi(),
+            userId: this.props.userId,
             messages: []
         }
     }
@@ -48,14 +48,9 @@ class LobbyBody extends Component{
                 if(timestamp !== this.state.timestamp){
                     console.log(this.state)
                     socket.emit('getUpdates');
-                } else{
-                    //I think I may want to do this
-                    //later but don't have a reason
-                    //for it now so I'm leaving it
-                    //commented out 
-
-                    // socket.emit('inSync');
-                }
+                } 
+                //using this to track disconnected players
+                socket.emit('inSync');
             })
 
             socket.emit('updateUser', {
@@ -120,7 +115,7 @@ class LobbyBody extends Component{
 
     createGame = data => {
         if(this.state.socket){
-            console.log('send data:', data)
+            data.userId = this.props.userId;
             this.state.socket.emit('createGame', data);
             this.props.history.push(`/game/${data.roomId}`)
             // this.props.unmount
@@ -132,14 +127,17 @@ class LobbyBody extends Component{
         if(this.state.socket){
             this.state.socket.emit('joinGame', {
                 roomId,
-                role
+                role,
+                userId: this.props.userId
             });
             this.props.history.push(`/game/${roomId}`)
         }
     }
 
     componentWillUnmount(){
-        this.state.socket.off();
+        if(this.state.socket){
+            this.state.socket.off();
+        }
     }
 
     render(){

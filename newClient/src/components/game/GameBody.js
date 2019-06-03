@@ -74,7 +74,10 @@ class GameBody extends Component{
             roomId: '',
             gameName: '',
             gameTime: '',
-            userCount: 0
+            userCount: 0,
+            users: [],
+
+            messages: []
         }
 
         
@@ -113,7 +116,8 @@ class GameBody extends Component{
                     blackPass,
                     gameEnd,
                     whiteKo,
-                    blackKo
+                    blackKo,
+                    users
                 } = data;
                 this.setState({
                     blackUser,
@@ -134,7 +138,8 @@ class GameBody extends Component{
                     blackPass,
                     gameEnd,
                     whiteKo,
-                    blackKo
+                    blackKo,
+                    users
                 })
             })
 
@@ -142,6 +147,9 @@ class GameBody extends Component{
                 if(this.state.timestamp !== timestamp){
                     socket.emit('getRoomUpdates', this.state.roomId);
                 }
+
+                //using this to track disconnected players
+                socket.emit('inSync', this.props.userId, this.state.roomId);
             })
 
             //This event will maintain the state of our
@@ -200,7 +208,10 @@ class GameBody extends Component{
     }
 
     handlePass = () => {
-        this.state.socket.emit('handlePass', {roomId: this.state.roomId})
+        this.state.socket.emit('handlePass', {
+            roomId: this.state.roomId,
+            userId: this.props.userId
+        })
     }
     // handlePass = () => {
 
@@ -397,6 +408,7 @@ class GameBody extends Component{
     handlePlay = (e, posX, posY) => {
         console.log('play')
         this.state.socket.emit('handlePlay', {
+            userId: this.props.userId,
             roomId: this.state.roomId,
             posX,
             posY
@@ -482,10 +494,14 @@ class GameBody extends Component{
     }
     //----------------------------------------------------------------------------------------------
 
+    sendMessageData = data =>{
+        this.state.socket.emit('sendMessage', data);
+    }
     componentWillUnmount(){
-        console.log('unmounting');
-        this.state.socket.emit('leaving')
-        this.state.socket.off();
+        if(this.state.socket){
+            this.state.socket.emit('leaving')
+            this.state.socket.off();
+        }
     }
 
     render(){
@@ -496,29 +512,45 @@ class GameBody extends Component{
                     whiteUser={this.state.whiteUser}
                 />
                 <div className="boardContainer">
-                    {this.state.gameEnd ? <h1>Game Over!</h1> :
-                    <h1>{this.state.blacksTurn ? "Black's Turn" : "White's Turn"}</h1>
-                    }
-                    <Board 
-                        positions={this.state.positions}
-                        handlePlay={this.handlePlay}
-                        blacksTurn={this.state.blacksTurn}
-                    />
-                    <h1>Turn Number: {this.state.turnNumber + 1}</h1>
-                    <div>
+                    <header className="lobbyHeader">
+                        {this.state.gameEnd ? <h2>Game Over!</h2> :
+                        <h2>{this.state.blacksTurn ? "Black's Turn" : "White's Turn"}</h2>
+                        }
+                    </header>
+                    <div className="boardBody">
+                        <Board 
+                            positions={this.state.positions}
+                            handlePlay={this.handlePlay}
+                            blacksTurn={this.state.blacksTurn}
+                        />
+                        <h1>Turn Number: {this.state.turnNumber + 1}</h1>
+                    </div>
+                    <footer className="boardFooter">
                         <button
+                            className="btnBackwards btnBoard"
                             onClick={this.handleBackwards}
                             >{'< Previous'}
                         </button>
                         <button
+                            className="btnBoard"
                             onClick={this.handlePass}
                             >Pass</button>
                         <button
+                            className="btnForwards btnBoard"
                             onClick={this.handleForwards}
                             >{'Next >'}
                         </button>
-                    </div>
+                    </footer>
                 </div>
+                <Chat 
+                    socket={this.state.socket}
+                    users={this.state.users}
+                    userId={this.state.userId}
+                    userName={this.state.userName}
+                    messages={this.state.messages}
+                    sendMessageData={this.sendMessageData}
+                    userImg={this.state.userImg}
+                />
             </div>
         )
     }
