@@ -1,5 +1,5 @@
 
-class GameController{
+class GameController{ 
     constructor(roomId, gameName, gameTime, users){
         this.roomId = roomId;
         this.gameName = gameName;
@@ -147,13 +147,14 @@ class GameController{
         this.users[userId].desyncCount = 0;
     }
 
-    checkUserSync(userId, cb){
+    checkUserSync(userId){
         if(!this.users[userId].inSync){
             this.users[userId].desyncCount++;
-            if(this.users[userId].desyncCount > 120){
-                updateUsers(userId, {}, true);
+            if(this.users[userId].desyncCount > 10){
+                return true;
             }
         }
+        this.users[userId].inSync =  false;
     }
 
     updateUsers(userId, data, deleteItem){
@@ -250,7 +251,6 @@ class GameController{
         //first check if the position that was passed is empty
         //TODO: Add proper error handling into this app
         if(val === 0){
-            console.log(`This shouldnt happen: X: ${posX} Y: ${posY}`);
             return undefined;
         }
         //push the current X and Y coordinates into the captureArr

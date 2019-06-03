@@ -26,17 +26,18 @@ class LobbyBody extends Component{
 
     componentWillMount(){
        
-
-        let socket = io.connect('/',{
+        console.log('mounting')
+        let socket = io.connect('localhost:3001/',{
             transports: ['websocket']
         });
-
+        console.log(socket)
         //Create Socket Connection, wait for 
         //response, on response we know socket
         //is connected, set event handlers on 
         //socket, then emit to tell server to send data back
         //to update state.
         socket.on('connectedToLobby', data => {
+            console.log('connected to lobby')
 
             //I now have one function which returns all data to the lobby
             //with a timestamp, this will allow us to compare the timestamp
@@ -50,7 +51,7 @@ class LobbyBody extends Component{
                     socket.emit('getUpdates');
                 } 
                 //using this to track disconnected players
-                socket.emit('inSync');
+                socket.emit('inSync', this.props.userId);
             })
 
             socket.emit('updateUser', {
@@ -141,35 +142,44 @@ class LobbyBody extends Component{
     }
 
     render(){
-        console.log('the socket:', this.state.socket)
-        return(
-            <div
-                className="lobbyBodyWrapper"
-            >
-                <UserInfo 
-                    userName={this.state.userName}
-                    ranking={this.state.ranking}
-                    updateUserName={this.updateUserName}
-                    updateRanking={this.updateRanking}
-                    userImg={this.state.userImg}
-                />
-                <Lobby 
-                    socket={this.state.socket}
-                    games={this.state.games}
-                    createGame={this.createGame}
-                    joinGame={this.joinGame}
-                />
-                <Chat 
-                    socket={this.state.socket}
-                    users={this.state.users}
-                    userId={this.state.userId}
-                    userName={this.state.userName}
-                    messages={this.state.messages}
-                    sendMessageData={this.sendMessageData}
-                    userImg={this.state.userImg}
-                />
-            </div>
-        )
+        if(!this.state.socket){
+            return(
+                <div className="outerConnection">
+                    <div className="innerConnection">
+                        <h1>Waiting To Connect</h1>
+                    </div>
+                </div>
+            )
+        } else {
+            return(
+                <div
+                    className="lobbyBodyWrapper"
+                >
+                    <UserInfo 
+                        userName={this.state.userName}
+                        ranking={this.state.ranking}
+                        updateUserName={this.updateUserName}
+                        updateRanking={this.updateRanking}
+                        userImg={this.state.userImg}
+                    />
+                    <Lobby 
+                        socket={this.state.socket}
+                        games={this.state.games}
+                        createGame={this.createGame}
+                        joinGame={this.joinGame}
+                    />
+                    <Chat 
+                        socket={this.state.socket}
+                        users={this.state.users}
+                        userId={this.state.userId}
+                        userName={this.state.userName}
+                        messages={this.state.messages}
+                        sendMessageData={this.sendMessageData}
+                        userImg={this.state.userImg}
+                    />
+                </div>
+            )
+        }
     }
 }
 

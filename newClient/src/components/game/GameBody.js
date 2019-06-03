@@ -86,7 +86,7 @@ class GameBody extends Component{
     componentWillMount(){
         //upon loading game body connect to game namespace
         //need to redo how I'm doing this connection likely wss://obscure-thicket-97287.herokuapp.com/${process.env.PORT || 3001}
-        let socket = io.connect(`/game`,{ 
+        let socket = io.connect(`localhost:3001/game`,{ 
             reconnect: true,
             transports: ['websocket']
 
@@ -505,54 +505,64 @@ class GameBody extends Component{
     }
 
     render(){
-        return(
-            <div className="gameBody">
-                <PlayerInfo 
-                    blackUser={this.state.blackUser}
-                    whiteUser={this.state.whiteUser}
-                />
-                <div className="boardContainer">
-                    <header className="lobbyHeader">
-                        {this.state.gameEnd ? <h2>Game Over!</h2> :
-                        <h2>{this.state.blacksTurn ? "Black's Turn" : "White's Turn"}</h2>
-                        }
-                    </header>
-                    <div className="boardBody">
-                        <Board 
-                            positions={this.state.positions}
-                            handlePlay={this.handlePlay}
-                            blacksTurn={this.state.blacksTurn}
-                        />
-                        <h1>Turn Number: {this.state.turnNumber + 1}</h1>
+        if(!this.state.socket){
+            return(
+                <div className="outerConnection">
+                    <div className="innerConnection">
+                        <h1>Waiting To Connect</h1>
                     </div>
-                    <footer className="boardFooter">
-                        <button
-                            className="btnBackwards btnBoard"
-                            onClick={this.handleBackwards}
-                            >{'< Previous'}
-                        </button>
-                        <button
-                            className="btnBoard"
-                            onClick={this.handlePass}
-                            >Pass</button>
-                        <button
-                            className="btnForwards btnBoard"
-                            onClick={this.handleForwards}
-                            >{'Next >'}
-                        </button>
-                    </footer>
                 </div>
-                <Chat 
-                    socket={this.state.socket}
-                    users={this.state.users}
-                    userId={this.state.userId}
-                    userName={this.state.userName}
-                    messages={this.state.messages}
-                    sendMessageData={this.sendMessageData}
-                    userImg={this.state.userImg}
-                />
-            </div>
-        )
+            )
+        } else {
+            return(
+                <div className="gameBody">
+                    <PlayerInfo 
+                        blackUser={this.state.blackUser}
+                        whiteUser={this.state.whiteUser}
+                    />
+                    <div className="boardContainer">
+                        <header className="lobbyHeader">
+                            {this.state.gameEnd ? <h2>Game Over!</h2> :
+                            <h2>{this.state.blacksTurn ? "Black's Turn" : "White's Turn"}</h2>
+                            }
+                        </header>
+                        <div className="boardBody">
+                            <Board 
+                                positions={this.state.positions}
+                                handlePlay={this.handlePlay}
+                                blacksTurn={this.state.blacksTurn}
+                            />
+                            <h1>Turn Number: {this.state.turnNumber + 1}</h1>
+                        </div>
+                        <footer className="boardFooter">
+                            <button
+                                className="btnBackwards btnBoard"
+                                onClick={this.handleBackwards}
+                                >{'< Previous'}
+                            </button>
+                            <button
+                                className="btnBoard"
+                                onClick={this.handlePass}
+                                >Pass</button>
+                            <button
+                                className="btnForwards btnBoard"
+                                onClick={this.handleForwards}
+                                >{'Next >'}
+                            </button>
+                        </footer>
+                    </div>
+                    <Chat 
+                        socket={this.state.socket}
+                        users={this.state.users}
+                        userId={this.state.userId}
+                        userName={this.state.userName}
+                        messages={this.state.messages}
+                        sendMessageData={this.sendMessageData}
+                        userImg={this.state.userImg}
+                    />
+                </div>
+            )
+        }
     }
 }
 

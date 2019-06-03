@@ -58,10 +58,14 @@ let lobbyData = {
     checkUserSync(userId){
         if(!this.users[userId].inSync){
             this.users[userId].desyncCount++;
-            if(this.users[userId].desyncCount > 120){
-                updateUsers(userId, {}, true);
+            
+            if(this.users[userId].desyncCount > 5){
+                this.updateUsers(userId, {}, true);
+                return;
             }
         }
+        this.users[userId].inSync = false;
+
     },
 
     updateUsers: function(cookie, data, deleteItem){
@@ -140,9 +144,6 @@ let lobbyData = {
         if(this.rooms[roomId]) throw new Error(`Game ${gameName} with roomId: ${roomId} already exists, cannot create.`);
         
         let user = this.users[cookie];
-        console.log('cookie,', cookie)
-        console.log('these users', this.users)
-        console.log('user', user)
         user.role = role;
         let users = {};
         users[cookie] = user;

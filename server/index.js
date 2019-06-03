@@ -53,10 +53,6 @@ lobby.use(sharedsession(session));
 //When the lobby recieves a new connection it will be passed the client's
 //socket, which we can add event handlers on
 lobby.on('connection', function (socket) {
-    console.log("lobbyData", lobbyData);
-    console.log("users", lobbyData.users);
-    console.log("data sent", lobbyData.Data);
-    console.log("cookie of connected user:", socket.handshake.headers);
     //First we emit back to the client to tell it that we recieved it's
     //connection, this allows it to initialize it's events
     socket.emit('connectedToLobby');
@@ -77,7 +73,6 @@ lobby.on('connection', function (socket) {
     socket.on('updateUser', data => {
         let cookie = data.userId;
         lobbyData.updateUsers(cookie, data);
-        console.log('users', lobbyData.users)
     })
 
     socket.on('updateMessages', data => {
@@ -91,7 +86,10 @@ lobby.on('connection', function (socket) {
         lobbyData.createRoom(data.roomId, data.gameName, data.gameTime, data.role, cookie);
         let intervalID = setInterval(() => {
             if(lobbyData.rooms[data.roomId]){
-                gameNsp.to(data.roomId).emit('checkRoomUpdates', lobbyData.rooms[data.roomId].timestamp)
+                gameNsp.to(data.roomId).emit('checkRoomUpdates', lobbyData.rooms[data.roomId].timestamp);
+                if(lobbyData.rooms[data.roomId].checkUserSync(data.userId)){
+                    userDisconnected(data.userId);
+                }
             }
         }, 500);
             
@@ -99,12 +97,10 @@ lobby.on('connection', function (socket) {
     })
 
     socket.on('joinGame', data => {
-        console.log(data)
-        console.log('users: join:', lobbyData.users)
-        let cookie = data.userId;
-        let user = lobbyData.users[cookie];
+        let userId = data.userId;
+        let user = lobbyData.users[userId];
         user.role = data.role;
-        lobbyData.rooms[data.roomId].updateUsers(cookie, user);
+        lobbyData.rooms[data.roomId].updateUsers(userId, user);
     })
 
     socket.on('inSync', userId => {
@@ -115,10 +111,11 @@ lobby.on('connection', function (socket) {
 
     //On disconnect remove the user from the users hash and update 
     //users on connected client
-    socket.on('disconnect', () => {
-        let {cookie} = socket.handshake.headers
-        lobbyData.updateUsers(cookie, {}, true)
-    })
+    //--this doesn't work without cookies
+    // socket.on('disconnect', () => {
+    //     let {cookie} = socket.handshake.headers
+    //     lobbyData.updateUsers(cookie, {}, true)
+    // })
     
 });
 
@@ -133,7 +130,17 @@ setInterval(() => {
 }, 1000);
 
 
-
+function userDisconnected(userId){
+    let cookie = userId
+        for(let room in lobbyData.rooms){
+            if(lobbyData.rooms[room].users[cookie]){
+                lobbyData.rooms[room].updateUsers(cookie, {}, true);
+            }
+            if(Object.keys(lobbyData.rooms[room].users).length <= 0){
+                delete lobbyData.rooms[room]
+            }
+        }
+}
 
 
 
@@ -149,7 +156,6 @@ gameNsp.on('connection', socket => {
             socket.join(roomId);
             gameNsp.to(roomId).emit('updateRoomInfo', lobbyData.rooms[roomId].returnData())
         }
-        console.log('out of if');
     });
 
     socket.on('getRoomUpdates', roomId => {
@@ -174,19 +180,7 @@ gameNsp.on('connection', socket => {
     
 // });
 
-    function userDisconnected(userId){
-        let cookie = userId
-            for(let room in lobbyData.rooms){
-                if(lobbyData.rooms[room].users[cookie]){
-                    console.log('user disconnected')
-                    lobbyData.rooms[room].updateUsers(cookie, {}, true);
-                }
-                if(Object.keys(lobbyData.rooms[room].users).length <= 0){
-                    console.log('clearing room')
-                    delete lobbyData.rooms[room]
-                }
-            }
-    }
+    
     socket.on('disconnect', userDisconnected);
 
     socket.on('leaving', userDisconnected);
