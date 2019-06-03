@@ -143,18 +143,22 @@ class GameController{
     }
 
     syncUser(userId){
-        this.users[userId].inSync = true;
-        this.users[userId].desyncCount = 0;
+        if(this.users[userId]){
+            this.users[userId].inSync = true;
+            this.users[userId].desyncCount = 0;
+        }
     }
 
     checkUserSync(userId){
-        if(!this.users[userId].inSync){
-            this.users[userId].desyncCount++;
-            if(this.users[userId].desyncCount > 10){
-                return true;
+        if(this.users[userId]){
+            if(!this.users[userId].inSync){
+                this.users[userId].desyncCount++;
+                if(this.users[userId].desyncCount > 10){
+                    return true;
+                }
             }
+            this.users[userId].inSync =  false;
         }
-        this.users[userId].inSync =  false;
     }
 
     updateUsers(userId, data, deleteItem){
