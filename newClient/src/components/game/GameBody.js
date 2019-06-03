@@ -86,7 +86,7 @@ class GameBody extends Component{
     componentWillMount(){
         //upon loading game body connect to game namespace
         //need to redo how I'm doing this connection likely wss://obscure-thicket-97287.herokuapp.com/${process.env.PORT || 3001}
-        let socket = io.connect(`localhost:3001/game`,{ 
+        let socket = io.connect(`/game`,{ 
             reconnect: true,
             transports: ['websocket']
 

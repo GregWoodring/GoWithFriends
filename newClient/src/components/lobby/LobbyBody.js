@@ -27,7 +27,7 @@ class LobbyBody extends Component{
     componentWillMount(){
        
         console.log('mounting')
-        let socket = io.connect('localhost:3001/',{
+        let socket = io.connect('/',{
             transports: ['websocket']
         });
         console.log(socket)
